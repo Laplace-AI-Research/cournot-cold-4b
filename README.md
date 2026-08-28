@@ -123,30 +123,41 @@ construction, not by argument.
 
 ## What this model cannot do
 
-The limits below were measured on **Cournot-Cold 8B**, on the same corpus and
-the same training recipe. Given the two models are statistically
-indistinguishable on both splits, they are the best available estimate for this
-one — but they are **inherited, not measured here**, and are flagged as such
-throughout.
+**Measured on this model**, not inherited. Scored off-venue on 778 Kalshi
+judgment questions and 3,000 Polymarket questions:
 
-1. **It needs the question's subject to have a public reference class.** On 461
-   Kalshi *Elections* questions the 8B collapses to resolution 0.0080 [0.0044,
-   0.0215]. Those questions name obscure individuals in local races. **That is a
-   lookup, not a forecast.**
+| stratum | n | Brier | resolution | BSS |
+|---|---:|---:|---:|---:|
+| Kalshi, all | 778 | 0.1716 | 0.0395 | +5.7% |
+| **Kalshi Politics** | 209 | 0.0788 | **0.1199** | **+56.1%** |
+| **Kalshi Elections** | 461 | 0.2201 | **0.0082** | **−19.0%** |
+| Polymarket | 3,000 | 0.2004 | 0.0057 | −7.0% |
+
+**The aggregate is a composition artifact and both numbers belong here.** +5.7%
+across all of Kalshi is 59% obscure local elections dragging down a stratum that
+beats the home venue — Politics discriminates *better* off-venue (0.1199) than
+on Manifold dev (0.0708).
+
+The 8B produces 0.1194 and 0.0080 on the same two strata. **The failure mode is
+identical at half the parameters.**
+
+1. **It needs the question's subject to have a public reference class.** On the
+   461 Kalshi *Elections* questions above this model collapses to resolution
+   **0.0082**. Those questions name obscure individuals in local races — *"Will
+   Peter Chatzky be the Democratic nominee for NY-17?"* There is no reference
+   class for such a name in a text-only prior. **That is a lookup, not a
+   forecast, and this model cannot perform it.**
 2. **It cannot do mechanical threshold or counting questions.** Questions needing
    a time series and precise arithmetic are outside a judgment prior.
 3. **It is weakest on sports**, on a keyword-identified subset that under-recalls.
 4. **Short horizons.** Under 7 days it never beats a market crowd at any point.
 
-### Not measured for this model, and deliberately absent
+### Where the two models are compared directly
 
-**Transfer has not been tested for the 4B.** The Kalshi and Polymarket forecasts
-that support claims 1–3 belong to the 8B, and this repository **does not ship
-them** rather than presenting another model's results as its own. `verify.py`
-says so where the transfer section would be.
-
-If off-venue behaviour matters to your use, use the 8B, whose transfer results
-are measured and published.
+Paired on the 778 Kalshi questions: Brier **−0.0064 [−0.0129, +0.0000]**,
+resolution **+0.0020 [−0.0053, +0.0099]**. Not significant — though the Brier
+upper bound sits exactly at zero, so read it as *not separated* rather than as
+excluding a 4B advantage.
 
 ---
 
@@ -174,9 +185,11 @@ not findings.
 - **Footing:** chat template on **both** train and score. Load-bearing; a
   mismatch here silently invalidated an earlier result on this project.
 - **Padding:** right. The head pools the last non-pad token.
-- **Seed:** 20260822, the same seed the 8B used. **One seed only** — neither
-  model is seed-replicated at full corpus, so the comparison between them is
-  matched, but neither absolute number is replicated.
+- **Seed:** 20260822, the same seed the 8B used, and **replicated**. A second
+  full-corpus run at seed 20260828 differs by **+0.0021 Brier [−0.0009, +0.0052]**
+  — not significant, with the interval half-width at the ±0.003 seed-noise floor.
+  The 8B replicates equally (+0.0012 [−0.0016, +0.0041]). Neither shipped number
+  is one seed's luck.
 
 **Reproduction note:** `transformers >= 4.51.0` is required for
 `Qwen3ForSequenceClassification`; `config.pad_token_id` must be set explicitly.
