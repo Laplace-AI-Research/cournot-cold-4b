@@ -1,4 +1,4 @@
-# Datasheet — Cournot Prior training and evaluation corpora
+# Datasheet — Cournot-Cold 4B training and evaluation corpora
 
 Follows Gebru et al., *Datasheets for Datasets* (arXiv:1803.09010). Published in
 place of the raw corpus, which is **not redistributed** — see Distribution.
@@ -59,16 +59,16 @@ public git history **before it passed**, so "nothing in `published` resolved
 before we committed to the freeze" is externally checkable.
 
 **Zero questions in either evaluation split resolved before the base model's
-public release (Qwen3-8B, 2025-04-29)**, so outcome memorisation is closed by
+public release (Qwen3-4B, 2025-04-29 — the whole Qwen3 family shares this date)**, so outcome memorisation is closed by
 construction. 88% of `published` also *opened* after that date.
 
-The gate is release date, not a stated pretraining cutoff — **Qwen3-8B publishes
+The gate is release date, not a stated pretraining cutoff — **Qwen3-4B publishes
 no cutoff anywhere**, and a release date is externally checkable while a vendor
 cutoff is not.
 
 ## Uses
 
-Used to train and evaluate Cournot Prior 8B. Not suitable for: studying Manifold
+Used to train and evaluate **Cournot-Cold 4B and Cournot-Cold 8B**, which share this corpus exactly. Not suitable for: studying Manifold
 users or trading behaviour (no user data retained); any claim about venues other
 than Manifold (transfer fails — see the model card); mechanical threshold or
 counting questions.
