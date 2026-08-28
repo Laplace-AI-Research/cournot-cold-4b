@@ -255,7 +255,12 @@ decision.
 
 ## Provenance of claims
 
-Every number here is derived in `docs/10-decisions.md` of the research
-repository, which also records the results that **failed** — including, for this
-model specifically, a published-split lead that did not survive its own interval
-(entry 2026-08-27aj).
+Every number here is recomputed from the shipped forecasts by `verify.py`, in
+this repository, with no model and no GPU. That is the check that matters and it
+is the one you can run.
+
+Behind it sits an internal decisions log recording how each number was derived
+and which results **failed** — including, for this model, a published-split lead
+that did not survive its own interval. **That log is not public**, so nothing in
+this card depends on it: every claim above is either reproducible from the files
+here or stated as unverified.

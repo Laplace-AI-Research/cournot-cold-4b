@@ -1,4 +1,4 @@
-Cournot Prior 8B — licence
+Cournot-Cold 4B — licence
 ==========================
 
 The LoRA adapter weights and the evaluation artifacts in this repository are
@@ -7,7 +7,7 @@ licensed under Creative Commons Attribution-NonCommercial 4.0 International
 
 Scope, and what this does NOT cover:
 
-  * The base model, Qwen/Qwen3-8B, is licensed Apache 2.0 by its authors. That
+  * The base model, Qwen/Qwen3-4B, is licensed Apache 2.0 by its authors. That
     licence is unaffected by this one and continues to permit commercial use of
     the base weights.
 
