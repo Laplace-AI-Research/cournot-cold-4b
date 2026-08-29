@@ -169,6 +169,38 @@ resolution **+0.0020 [−0.0053, +0.0099]**. Not significant — though the Brie
 upper bound sits exactly at zero, so read it as *not separated* rather than as
 excluding a 4B advantage.
 
+### The contamination-free Kalshi subset, where this model does not beat a constant
+
+The 778 above include questions that resolved before the training freeze. **117 of
+them resolved after it** (`resolved_at > 2026-08-15T00:00:00Z`), and that subset is
+contamination-free by the same rule as the published split. It is also the least
+flattering number in this card, so it is stated rather than omitted.
+
+| | n | Brier | resolution |
+|---|---:|---:|---:|
+| Cournot-Cold 4B | 117 | 0.1891 | 0.0213 |
+| Cournot-Cold 8B | 117 | 0.2064 | 0.0356 |
+| **a constant at the base rate (0.2308)** | 117 | **0.1775** | 0.0000 |
+
+Paired bootstrap, 10,000 draws, clustered on `question_id` (each of the 117 is its
+own `event_ticker`, so question-level resampling *is* the cluster bootstrap):
+
+> **4B minus constant: +0.0116 [-0.0280, +0.0501] — not significant.**
+> **4B minus 8B: -0.0173 [-0.0356, +0.0016] — not significant.**
+
+**Read this as: on 117 contamination-free out-of-venue questions, this model is
+statistically indistinguishable from predicting the base rate on every one.**
+
+And note the shape of the 4B/8B gap here: the 4B has the lower Brier but the
+**lower resolution** (0.0213 against 0.0356). Scoring better while discriminating
+less is hedging toward the base rate, not superior forecasting — which is why the
+Brier column alone must not be read as "the 4B wins on Kalshi".
+
+The subset is small and lopsided — 88 of 117 are Elections, the stratum identified
+above as this model's worst — so it is not a verdict on the venue. It says: **the
+transfer result above rests partly on pre-freeze questions, and the clean slice of
+it does not show skill.**
+
 ---
 
 ## Evaluation data
