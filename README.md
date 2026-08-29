@@ -66,10 +66,23 @@ the artifact:
 
 Paired, question-clustered bootstraps, 10,000 resamples, read by expectation.
 
-**The dev comparison carries the claim, and it is well-powered**: its Brier
-half-width is **0.0030**, exactly the measured seed-to-seed noise floor of this
-setup. The test resolves as finely as two runs of the same configuration differ,
-which is the most a comparison here can do.
+**The dev comparison carries the claim.** Its Brier half-width is **0.0030**.
+
+**CORRECTED 2026-08-29.** An earlier version of this paragraph called that
+"well-powered" on the grounds that the half-width equalled the measured
+seed-to-seed noise floor, and concluded the test "resolves as finely as two runs
+of the same configuration differ". **That was wrong, and in the unsafe
+direction.** ±0.003 is the standard deviation of a *single* run; the difference
+between *two* independently trained runs has a standard deviation of about
+0.003 × √2 ≈ 0.004, so the 95% threshold is closer to **±0.008**. Measured
+directly: three runs of one unchanged recipe gave 0.1752 / 0.1803 / 0.1805.
+
+**The null above survives this and is strengthened by it** — a wider true
+uncertainty makes "indistinguishable" easier to support, not harder. But the
+half-width is **narrower** than run-to-run variation, not equal to it, so this
+comparison could have called a difference significant that was only a different
+training run. Full measurement in the
+[1.7B card](https://huggingface.co/Laplace-AI-Research/cournot-cold-1-7b).
 
 **The published comparison is consistent but cannot carry the claim alone.** Its
 half-width is 1.8× the effect it is measuring; separating the two models there
@@ -78,6 +91,23 @@ split is inside its own noise and should not be read as a win.
 
 **So: indistinguishable on dev at n=3,000, consistent on published at n=277.**
 Not "the 4B is better."
+
+
+**The ladder now has a third rung.**
+[`Cournot-Cold 1.7B`](https://huggingface.co/Laplace-AI-Research/cournot-cold-1-7b)
+extends the same control down to 1.7B, and **it does not tie** — it is
++0.0119 Brier [+0.0080, +0.0158] worse than this model on dev. The degradation is
+entirely **resolution**; calibration is flat across the whole 4.7× span. So the
+small model learns *how confident to be* as well as the large one, and loses only
+*which questions to be confident about*.
+
+**Read its training-variance section before trusting any interval on this page.**
+Two runs of an identical recipe differ by more than a question-clustered
+bootstrap implies, and a model-vs-model difference below roughly **0.008 Brier**
+should be treated as unresolved — which is wider than several intervals quoted
+below. The nulls survive that (a wider uncertainty makes "indistinguishable"
+easier to support, not harder); any positive claim needs it.
+
 
 ### Why you would take the 4B
 
