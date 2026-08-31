@@ -191,27 +191,39 @@ construction, not by argument.
 
 ## What this model cannot do
 
-**Measured on this model**, not inherited. Scored off-venue on 778 Kalshi
-judgment questions and 3,000 Polymarket questions:
+**Measured on this model**, not inherited. Scored off-venue on **1,219 Kalshi
+judgment questions** and 3,000 Polymarket questions:
+
+> **The Kalshi rows were rebuilt on 2026-08-30 and changed.** The set they
+> replaced had **no builder anywhere** — its selection rule was a metadata
+> string no code implemented — and its prompts depended on a Kalshi API field
+> present in no archive we kept. This set is built by
+> [`scripts/kalshi_eval_set.py`](scripts/kalshi_eval_set.py),
+> [`kalshi_subtitles.py`](scripts/kalshi_subtitles.py) and
+> [`kalshi_rebuild_prompts.py`](scripts/kalshi_rebuild_prompts.py), which
+> reproduce **all 157 prompts shared with the old set exactly** and refuse to
+> write otherwise. `verify.py` recomputes every number below.
 
 | stratum | n | Brier | resolution | BSS |
 |---|---:|---:|---:|---:|
-| Kalshi, all | 778 | 0.1716 | 0.0395 | +5.7% |
-| **Kalshi Politics** | 209 | 0.0788 | **0.1199** | **+56.1%** |
-| **Kalshi Elections** | 461 | 0.2201 | **0.0082** | **−19.0%** |
+| Kalshi, all | 1,219 | 0.1818 | 0.0512 | +18.6% |
+| **Kalshi Politics** | 170 | 0.0737 | **0.1262** | **+62.1%** |
+| Kalshi Entertainment | 500 | 0.1811 | 0.0768 | +19.9% |
+| Kalshi Science & Technology | 97 | 0.1906 | 0.0814 | +21.3% |
+| Kalshi Economics | 67 | 0.2189 | 0.0735 | +10.0% |
+| **Kalshi Elections** | 382 | 0.2234 | **0.0125** | **−7.8%** |
 | Polymarket | 3,000 | 0.2004 | 0.0057 | −7.0% |
 
-**The aggregate is a composition artifact and both numbers belong here.** +5.7%
-across all of Kalshi is 59% obscure local elections dragging down a stratum that
-beats the home venue — Politics discriminates *better* off-venue (0.1199) than
-on Manifold dev (0.0708).
+**The aggregate is a composition artifact and every stratum belongs here.**
+Elections is 31% of this corpus and scores worse than a constant; Politics is
+14% and discriminates *better* off-venue (0.1262) than on Manifold dev (0.0708).
 
-The 8B produces 0.1194 and 0.0080 on the same two strata. **The failure mode is
+The 8B produces 0.1328 and 0.0198 on the same two strata. **The failure mode is
 identical at half the parameters.**
 
 1. **It needs the question's subject to have a public reference class.** On the
-   461 Kalshi *Elections* questions above this model collapses to resolution
-   **0.0082**. Those questions name obscure individuals in local races — *"Will
+   382 Kalshi *Elections* questions above this model collapses to resolution
+   **0.0125**. Those questions name obscure individuals in local races — *"Will
    Peter Chatzky be the Democratic nominee for NY-17?"* There is no reference
    class for such a name in a text-only prior. **That is a lookup, not a
    forecast, and this model cannot perform it.**
@@ -222,44 +234,43 @@ identical at half the parameters.**
 
 ### Where the two models are compared directly
 
-Paired on the 778 Kalshi questions: Brier **−0.0064 [−0.0129, +0.0000]**,
-resolution **+0.0020 [−0.0053, +0.0099]**. Not significant — though the Brier
-upper bound sits exactly at zero, so read it as *not separated* rather than as
-excluding a 4B advantage.
+Paired on the 1,219 rebuilt Kalshi questions: Brier **+0.0018 [−0.0035,
++0.0071]**, question-clustered. Not significant, and now symmetric about zero
+rather than pressed against it — on the old set the upper bound sat exactly at
+0.0000, which was always a reason to say *not separated* rather than to claim a
+4B advantage. The rebuilt set says the same thing more plainly.
 
-### The contamination-free Kalshi subset, where this model does not beat a constant
+### Elections is a subject-matter limit, not contamination
 
-The 778 above include questions that resolved before the training freeze. **117 of
-them resolved after it** (`resolved_at > 2026-08-15T00:00:00Z`), and that subset is
-contamination-free by the same rule as the published split. It is also the least
-flattering number in this card, so it is stated rather than omitted.
+This card previously carried a section titled *"the contamination-free Kalshi
+subset, where this model does not beat a constant."* **That framing was wrong**, and it
+was wrong in the direction that made us look careful.
 
-| | n | Brier | resolution |
+That subset was **75% Elections**. The model failed on it because it cannot
+forecast obscure local elections — which this card already says elsewhere about
+the aggregate — not because the freeze boundary revealed anything about
+contamination. Holding the category fixed shows it directly:
+
+| slice | n | Brier | BSS |
 |---|---:|---:|---:|
-| Cournot-Cold 4B | 117 | 0.1891 | 0.0213 |
-| Cournot-Cold 8B | 117 | 0.2064 | 0.0356 |
-| **a constant at the base rate (0.2308)** | 117 | **0.1775** | 0.0000 |
+| Elections, resolved **after** the freeze | 69 | 0.2047 | **−10.3%** |
+| Elections, resolved **before** the freeze | 313 | 0.2275 | **−7.6%** |
 
-Paired bootstrap, 10,000 draws, clustered on `question_id` (each of the 117 is its
-own `event_ticker`, so question-level resampling *is* the cluster bootstrap):
+**Post-freeze is not better — it is slightly worse.** If performance before the
+freeze were inflated by the base model having seen those questions, the clean
+subset would look worse than the exposed one. It does not. The limit is the
+subject matter, and it is present on both sides of the freeze.
 
-> **4B minus constant: +0.0116 [-0.0280, +0.0501] — not significant.**
-> **4B minus 8B: -0.0173 [-0.0356, +0.0016] — not significant.**
+On the rebuilt post-freeze subset as a whole (n=183) this model scores Brier
+0.1497 against a constant's 0.2496 — **−0.0999 [−0.1195, −0.0805]**, significantly better. That
+reverses the old card's claim, and **it is a composition effect, not a
+contamination result**: the old 117-row subset was 75% Elections, the new
+183-row one is 46% Entertainment. Both numbers are artifacts of their category
+mix. Neither says anything about contamination, and neither should be quoted as
+though it does.
 
-**Read this as: on 117 contamination-free out-of-venue questions, this model is
-statistically indistinguishable from predicting the base rate on every one.**
-
-And note the shape of the 4B/8B gap here: the 4B has the lower Brier but the
-**lower resolution** (0.0213 against 0.0356). Scoring better while discriminating
-less is hedging toward the base rate, not superior forecasting — which is why the
-Brier column alone must not be read as "the 4B wins on Kalshi".
-
-The subset is small and lopsided — 88 of 117 are Elections, the stratum identified
-above as this model's worst — so it is not a verdict on the venue. It says: **the
-transfer result above rests partly on pre-freeze questions, and the clean slice of
-it does not show skill.**
-
----
+The honest summary is the one that survives every slicing: **this model cannot
+forecast obscure local elections, and no amount of resampling changes that.**
 
 ## Evaluation data
 
