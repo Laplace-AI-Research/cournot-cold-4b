@@ -16,11 +16,11 @@ tags:
   - peft
   - qwen3
 model-index:
-  - name: cournot-cold-4b
+  - name: tarot-draw-4b
     results:
       - task: {type: forecasting, name: Binary event forecasting}
         dataset:
-          name: Cournot published split (Manifold, resolved after 2026-08-15 freeze)
+          name: Tarot published split (Manifold, resolved after 2026-08-15 freeze)
           type: manifold-published
         metrics:
           - {type: brier, value: 0.1831, name: Brier score}
@@ -29,7 +29,7 @@ model-index:
           - {type: ece, value: 0.0526, name: ECE (equal-width, 10 bins)}
 ---
 
-# Cournot-Cold 4B
+# Tarot-Draw 4B
 
 A **calibrated probability estimator** for binary questions about future events.
 Given a question, its resolution criteria, its scheduled resolution date and an
@@ -38,9 +38,9 @@ text alone** — no retrieval, no news, no market price.
 
 LoRA adapter + scalar regression head on `Qwen/Qwen3-4B`.
 
-**Weights:** [`Laplace-AI-Research/cournot-cold-4b`](https://huggingface.co/Laplace-AI-Research/cournot-cold-4b)
+**Weights:** [`Laplace-AI-Research/tarot-draw-4b`](https://huggingface.co/Laplace-AI-Research/tarot-draw-4b)
 — LoRA adapter, 264 MB.
-**Evidence:** [`Laplace-AI-Research/cournot-cold-4b`](https://github.com/Laplace-AI-Research/cournot-cold-4b)
+**Evidence:** [`Laplace-AI-Research/tarot-draw-4b`](https://github.com/Laplace-AI-Research/tarot-draw-4b)
 — the eval splits behind every claim, this model's raw forecasts, the metric
 code, and `verify.py`, which recomputes every number below without a model or a
 GPU.
@@ -49,7 +49,7 @@ GPU.
 
 ## Read this first: this model exists to be compared
 
-**Cournot-Cold 4B and [Cournot-Cold 8B](https://huggingface.co/Laplace-AI-Research/cournot-cold-8b)
+**Tarot-Draw 4B and [Tarot-Draw 8B](https://huggingface.co/Laplace-AI-Research/tarot-draw-8b)
 are statistically indistinguishable.** They were trained on the same 81,870
 questions, with the same targets, the same seed, the same footing, and differ
 only in base model size — 4B against 8B.
@@ -82,7 +82,7 @@ uncertainty makes "indistinguishable" easier to support, not harder. But the
 half-width is **narrower** than run-to-run variation, not equal to it, so this
 comparison could have called a difference significant that was only a different
 training run. Full measurement in the
-[1.7B card](https://huggingface.co/Laplace-AI-Research/cournot-cold-1-7b).
+[1.7B card](https://huggingface.co/Laplace-AI-Research/tarot-draw-1-7b).
 
 **The published comparison is consistent but cannot carry the claim alone.** Its
 half-width is 1.8× the effect it is measuring; separating the two models there
@@ -94,7 +94,7 @@ Not "the 4B is better."
 
 
 **The ladder now has a third rung.**
-[`Cournot-Cold 1.7B`](https://huggingface.co/Laplace-AI-Research/cournot-cold-1-7b)
+[`Tarot-Draw 1.7B`](https://huggingface.co/Laplace-AI-Research/tarot-draw-1-7b)
 extends the same control down to 1.7B, and **it does not tie** — it is
 +0.0119 Brier [+0.0080, +0.0158] worse than this model on dev. The degradation is
 entirely **resolution**; calibration is flat across the whole 4.7× span. So the
@@ -358,7 +358,7 @@ To regenerate those forecasts from the weights instead:
 
 ```bash
 uv run python scripts/scalar_score.py \
-  --adapter Laplace-AI-Research/cournot-cold-4b \
+  --adapter Laplace-AI-Research/tarot-draw-4b \
   --base-model Qwen/Qwen3-4B \
   --set eval/published_eval.json \
   --out published.jsonl \
